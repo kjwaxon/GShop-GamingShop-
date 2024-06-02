@@ -29,11 +29,22 @@ public async Task<IActionResult> UpdateProduct(UpdateProductDTO model)
             string imageName = product.ImagePath;
             if (model.UploadImage != null)
             {
-                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "img/product");
+                string uploadDir = _webHostEnvironment.WebRootPath;
+                if (uploadDir == null)
+                {
+                    TempData["Error"] = "Invalid web root path.";
+                    return View(model);
+                }
+
+                uploadDir = Path.Combine(uploadDir, "img", "product");
+                if (!Directory.Exists(uploadDir))
+                {
+                    Directory.CreateDirectory(uploadDir);
+                }
 
                 if (!string.Equals(product.ImagePath, "default.png"))
                 {
-                    if (uploadDir == null || product.ImagePath == null)
+                    if (product.ImagePath == null)
                     {
                         TempData["Error"] = "Invalid image path.";
                         return View(model);
