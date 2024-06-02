@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Create Category";
+}
+@model CreateCategoryDTO
+<div class="container mt-5">
+
+    <div class="card">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-xl-6">
+                <div class="card-body p-md-5 text-black">
+                    <h3 class="mb-5 text-uppercase d-block">Add New Category</h3>
+                    <form asp-action="CreateCategory">
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="CategoryName" asp-for="CategoryName"></label>
+                                    <input id="CategoryName" asp-for="CategoryName" class="form-control form-control-lg" />
+                                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label asp-for="Description" class="form-label" for="Description"></label>
+                                    <input asp-for="Description" id="Description" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end pt-3">
+                            <button asp-action="Index" class="btn btn-info btn-lg">Back</button>
+                            <button type="submit" class="btn btn-warning btn-lg ms-2">Save</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

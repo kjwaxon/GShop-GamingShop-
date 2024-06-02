@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Update Product";
+}
+@model UpdateProductDTO
+<div class="container mt-5">
+
+    <div class="card">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-xl-6">
+                <div class="card-body p-md-5 text-black">
+                    <h3 class="mb-5 text-uppercase d-block">Update Product</h3>
+                    <form asp-action="UpdateProduct" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Image" />
+                        <input type="hidden" asp-for="CreatedDate" />
+                        <input type="hidden" asp-for="UpdatedDate" />
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="ProductName" asp-for="ProductName"></label>
+                                    <input id="ProductName" asp-for="ProductName" class="form-control form-control-lg" />
+                                    <span asp-validation-for="ProductName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="Description" asp-for="Description"></label>
+                                    <input id="Description" asp-for="Description" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="UnitPrice" asp-for="UnitPrice"></label>
+                                    <input id="UnitPrice" asp-for="UnitPrice" class="form-control form-control-lg" />
+                                    <span asp-validation-for="UnitPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="Quantity" asp-for="Quantity"></label>
+                                    <input id="Quantity" asp-for="Quantity" class="form-control form-control-lg" />
+                                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label asp-for="SubcategoryId" class="form-label" for="SubcategoryId"></label>
+                                    <select asp-for="SubcategoryId" class="form-control form-control-lg">
+                                        <option disabled selected value="0">Please select a subcategory</option>
+                                        @foreach (var subcategory in Model.Subcategories)
+                                        {
+                                            <option value="@subcategory.Id">@subcategory.Name</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="SubcategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="uploadImage" asp-for="UploadImage"></label>
+                                    <input type="file" id="uploadImage" asp-for="UploadImage" class="form-control form-control-lg" />
+                                    <span asp-validation-for="UploadImage" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <img id="image" src="~/img/product/@Model.Image" width="150" height="150" />
+                            </div>
+
+                        </div>
+                        <div class="d-flex justify-content-end pt-3">
+                            <button asp-action="Index" class="btn btn-info btn-lg">Back</button>
+                            <button type="submit" class="btn btn-warning btn-lg ms-2">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

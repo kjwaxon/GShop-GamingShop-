@@ -1,0 +1,103 @@
+﻿@using ApplicationCore.Entities.Abstract
+@{
+    ViewData["Title"] = "Index";
+}
+@model List<GetSubcategoryVM>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Subcategories</h3>
+            </div>
+            <div class="card-body">
+                <table id="myTable2" class="nowrap cell-border hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Subcategory</th>
+                            <th>Category</th>
+                            <th>Created Date</th>
+                            <th>Updated Date</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var subcategory in Model)
+                        {
+                            <tr>
+                                <td>@subcategory.Id</td>
+                                <td>
+                                    @if (subcategory.SubcategoryName.Length > 40)
+                                    {
+                                        <span class="truncate-text" title="@subcategory.SubcategoryName" data-fulltext="@subcategory.SubcategoryName">@subcategory.SubcategoryName.Substring(0, 40)...</span>
+                                    }
+                                    else
+                                    {
+                                        @subcategory.SubcategoryName
+                                    }
+                                </td>
+                                <td>@subcategory.CategoryName</td>
+                                <td>@subcategory.CreatedDate</td>
+                                @if (subcategory.UpdatedDate is not null)
+                                {
+                                    <td>@subcategory.UpdatedDate</td>
+                                }
+                                else
+                                {
+                                    <td> - </td>
+                                }
+                                @if (subcategory.Status == Status.Active)
+                                {
+                                    <td class="text-success">Active</td>
+                                }
+                                else
+                                {
+                                    <td class="text-primary">Updated</td>
+                                }
+                                <td>
+                                    <a class="btn btn-outline-success" asp-action="UpdateSubcategory" asp-route-id="@subcategory.Id">Update</a>
+                                </td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal-@subcategory.Id">
+                                        Delete
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="exampleModal-@subcategory.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Delete Warning</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete @subcategory.SubcategoryName subcategory?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <a asp-action="DeleteSubcategory" asp-route-id="@subcategory.Id" class="btn btn-danger">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-outline-dark d-block" asp-action="CreateSubcategory">Create New Subcategory</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

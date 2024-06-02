@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Create Subcategory";
+}
+@model CreateSubcategoryDTO
+<div class="container mt-5">
+    <div class="card">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-xl-6">
+                <div class="card-body p-md-5 text-black">
+                    <h3 class="mb-5 text-uppercase d-block">Add New Subcategory</h3>
+                    <form asp-action="CreateSubcategory">
+                        <div class="row">
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="subcategoryName" asp-for="SubcategoryName">Subcategory Name</label>
+                                    <input id="subcategoryName" asp-for="SubcategoryName" class="form-control form-control-lg" />
+                                    <span asp-validation-for="SubcategoryName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-4">
+                                <div class="form-outline">
+                                    <label class="form-label" for="categoryId" asp-for="CategoryId">Category</label>
+                                    <select id="categoryId" asp-for="CategoryId" class="form-select form-select-lg">
+                                        <option disabled selected value="0">Please select a category</option>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <option value="@category.Id">@category.Name</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end pt-3">
+                            <a asp-action="Index" class="btn btn-info btn-lg">Back</a>
+                            <button type="submit" class="btn btn-warning btn-lg ms-2">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

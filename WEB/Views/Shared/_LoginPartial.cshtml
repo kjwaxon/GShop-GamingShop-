@@ -1,0 +1,74 @@
+﻿<div class="d-flex ms-auto">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item ms-auto">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+        </li>
+        <li class="nav-item ms-auto">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+        </li>
+    }
+    else
+    {
+
+        @if (User.IsInRole("admin"))
+        {
+            <li class="nav-item p-1">
+                <a class="btn btn-outline-primary" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Dashboard</a>
+            </li>
+            <li class="nav-item p-1">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Teachers" asp-action="Index">Öğretmenler</a>
+            </li>
+            <li class="nav-item p-1">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="Index">Öğrenciler</a>
+            </li>
+            <li class="nav-item p-1">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Classrooms" asp-action="Index">Sınıflar</a>
+            </li>
+        }
+
+        @if (!User.IsInRole("admin"))
+        {
+            <li class="nav-item p-1">
+                <a class="btn btn-outline-warning" asp-area="" asp-controller="Students" asp-action="DetailStudent">Notlarım</a>
+            </li>
+
+        }
+
+        <li class="nav-item dropdown p-1">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                @User.Identity!.Name
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li>
+                    <a class="dropdown-item" asp-controller="Account" asp-action="EditUser">Edit Information</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">Logout</a>
+                </li>
+            </ul>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Logout Warning</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    @User.Identity.Name are you sure you want to logout?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Yes</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               
+        </li>
+
+
+    }
+</div>

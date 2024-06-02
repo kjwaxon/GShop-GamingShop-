@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "EditUser";
+}
+@model EditUserDTO
+
+<div class="row d-flex justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Edit Information</h3>
+            </div>
+            <form asp-action="EditUser">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="CreatedDate" />
+                <input type="hidden" asp-for="UpdatedDate" />
+                <input type="hidden" asp-for="FirstName" />
+                <input type="hidden" asp-for="LastName" />
+                <input type="hidden" asp-for="UserName" />
+                <div class="card-body">
+                    <div>
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="UserName" class="form-label"></label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="BirthDate" class="form-label"></label>
+                        <input type="date" asp-for="BirthDate" class="form-control" />
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="card-footer" style="height:100%;">
+                    <a class="btn btn-outline-primary d-block" asp-action="ChangePassword" asp-route-id="@Model.Id">Change Password</a>
+                    <button type="submit" class="btn btn-outline-success my-2 w-100">Save</button>
+                    <a asp-action="Index" asp-controller="Home" class="btn d-block btn-outline-info">Go Back To Homepage</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

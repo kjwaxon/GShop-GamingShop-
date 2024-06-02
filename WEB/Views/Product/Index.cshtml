@@ -1,0 +1,129 @@
+﻿@using ApplicationCore.Entities.Abstract
+@{
+    ViewData["Title"] = "Index";
+}
+@model List<GetProductVM>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Products</h3>
+            </div>
+            <div class="card-body">
+                <table id="myTable2" class="cell-border hover compact" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Product</th>
+                            <th>Subcategory</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Image</th>
+                            <th>Created Date</th>
+                            <th>Updated Date</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+                                <td>@product.Id</td>
+                                <td>
+                                    @if (product.ProductName.Length > 40)
+                                    {
+                                        <span class="truncate-text" title="@product.ProductName" data-fulltext="@product.ProductName">@product.ProductName.Substring(0, 40)...</span>
+                                    }
+                                    else
+                                    {
+                                        @product.ProductName
+                                    }
+                                </td>
+                                <td>
+                                    @if (product.SubcategoryName.Length > 40)
+                                    {
+                                        <span class="truncate-text" title="@product.SubcategoryName" data-fulltext="@product.SubcategoryName">@product.SubcategoryName.Substring(0, 40)...</span>
+                                    }
+                                    else
+                                    {
+                                        @product.SubcategoryName
+                                    }
+                                </td>
+                                <td>
+                                    @if (product.ProductDescription.Length > 40)
+                                    {
+                                        <span class="truncate-text" title="@product.ProductDescription" data-fulltext="@product.ProductDescription">@product.ProductDescription.Substring(0, 40)...</span>
+                                    }
+                                    else
+                                    {
+                                        @product.ProductDescription
+                                    }
+                                </td>
+                                <td>@product.UnitPrice.ToString("C2",new System.Globalization.CultureInfo("en-US"))</td>
+                                <td>@product.Quantity</td>
+                                <td><img src="~/img/product/@product.Image" class="initial-size img-fluid" alt="Responsive image" /></td>
+                                <td>@product.CreatedDate</td>
+                                @if (product.UpdatedDate is not null)
+                                {
+                                    <td>@product.UpdatedDate</td>
+                                }
+                                else
+                                {
+                                    <td> - </td>
+                                }
+                                @if (product.Status == Status.Active)
+                                {
+                                    <td class="text-success">Active</td>
+                                }
+                                else
+                                {
+                                    <td class="text-primary">Updated</td>
+                                }
+                                <td>
+                                    <a class="btn btn-outline-success" asp-action="UpdateProduct" asp-route-id="@product.Id">Update</a>
+                                </td>
+                                <td>
+                                    <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal-@product.Id">
+                                        Delete
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="exampleModal-@product.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Delete Warning</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete @product.ProductName product?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <a asp-action="DeleteProduct" asp-route-id="@product.Id" class="btn btn-danger">Yes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-outline-dark d-block" asp-action="CreateProduct">Create New Product</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
