@@ -17,7 +17,7 @@ namespace WEB.Controllers
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(IProductRepository productRepo,ISubcategoryRepository subcategoryRepo,IMapper mapper,IWebHostEnvironment webHostEnvironment)
+        public ProductController(IProductRepository productRepo, ISubcategoryRepository subcategoryRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
             _productRepo = productRepo;
             _subcategoryRepo = subcategoryRepo;
@@ -29,40 +29,42 @@ namespace WEB.Controllers
         {
             var products = await _productRepo.GetFilteredListAsync
                 (
-                    select:x=> new GetProductVM
+                    select: x => new GetProductVM
                     {
                         Id = x.Id,
-                        ProductName = x.ProductName,  
-                        ProductDescription=x.Description,
-                        UnitPrice= x.UnitPrice,
-                        Quantity = x.Quantity,  
-                        Image=x.ImagePath,
-                        SubcategoryName=x.Subcategory.SubcategoryName,
-                        CreatedDate=x.CreatedDate,
-                        UpdatedDate=x.UpdatedDate,
+                        ProductName = x.ProductName,
+                        ProductDescription = x.Description,
+                        UnitPrice = x.UnitPrice,
+                        Quantity = x.Quantity,
+                        Image = x.ImagePath,
+                        SubcategoryName = x.Subcategory.SubcategoryName,
+                        CreatedDate = x.CreatedDate,
+                        UpdatedDate = x.UpdatedDate,
                         Status = x.Status
                     },
-                    where:x=>x.Status!=Status.Passive,
-                    join:x=>x.Include(y=>y.Subcategory)
+                    where: x => x.Status != Status.Passive,
+                    join: x => x.Include(y => y.Subcategory)
                 );
             return View(products);
         }
+
         //[Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateProduct()
         {
             var subcategories = await _subcategoryRepo.GetFilteredListAsync
                 (
-                    select:x=> new ShowSubcategoryDTO
+                    select: x => new ShowSubcategoryDTO
                     {
-                        Id=x.Id,
-                        Name=x.SubcategoryName
+                        Id = x.Id,
+                        Name = x.SubcategoryName
                     },
-                    where:x=>x.Status!=Status.Passive,
-                    orderBy:x=>x.OrderByDescending(y=>y.CreatedDate)
+                    where: x => x.Status != Status.Passive,
+                    orderBy: x => x.OrderByDescending(y => y.CreatedDate)
                 );
             var model = new CreateProductDTO { Subcategories = subcategories };
-            return View(model); 
+            return View(model);
         }
+
         //[Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
 
@@ -82,24 +84,24 @@ namespace WEB.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await _productRepo.AnyAsync(x=>x.Status!=Status.Passive && x.ProductName == model.ProductName))
+                if (await _productRepo.AnyAsync(x => x.Status != Status.Passive && x.ProductName == model.ProductName))
                 {
                     TempData["Error"] = "This product name is used. Please select another name!";
                     return View(model);
                 }
-                string imageName ="default.png";
-                if (model.UploadImage!=null)
+                string imageName = "default.png";
+                if (model.UploadImage != null)
                 {
                     string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "img/product");
                     imageName = $"{Guid.NewGuid()}_{model.UploadImage.FileName}";
-                    string filePath=Path.Combine(uploadDir, imageName);
-                    FileStream fileStream= new FileStream(filePath,FileMode.Create);
+                    string filePath = Path.Combine(uploadDir, imageName);
+                    FileStream fileStream = new FileStream(filePath, FileMode.Create);
                     await model.UploadImage.CopyToAsync(fileStream);
                     fileStream.Close();
                 }
 
                 var product = _mapper.Map<Product>(model);
-                product.ImagePath= imageName;
+                product.ImagePath = imageName;
                 await _productRepo.AddAsync(product);
                 TempData["Success"] = $"{product.ProductName} product added!";
                 return RedirectToAction("Index");
@@ -127,7 +129,7 @@ namespace WEB.Controllers
                         );
 
                     var model = _mapper.Map<UpdateProductDTO>(product);
-                    model.Subcategories= subcategories;
+                    model.Subcategories = subcategories;
                     return View(model);
                 }
             }
@@ -164,28 +166,35 @@ namespace WEB.Controllers
                         TempData["Error"] = "This product name is been used.Please choose another name!";
                         return View(model);
                     }
-                    string imageName = model.Image;
+                    string imageName = product.ImagePath;
+
+
                     if (model.UploadImage != null)
                     {
                         string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "img/product");
 
-                        if (!string.Equals(model.Image, "default.png"))
+                        if (!string.Equals(product.ImagePath, "default.png", StringComparison.OrdinalIgnoreCase))
                         {
-                            string oldPath = Path.Combine(uploadDir, model.Image);
+
+                            string oldPath = Path.Combine(uploadDir, imageName);
                             if (System.IO.File.Exists(oldPath))
                             {
                                 System.IO.File.Delete(oldPath);
                             }
 
                         }
+
                         imageName = $"{Guid.NewGuid()}_{model.UploadImage.FileName}";
                         string filePath = Path.Combine(uploadDir, imageName);
-                        FileStream fileStream = new FileStream(filePath, FileMode.Create);
-                        await model.UploadImage.CopyToAsync(fileStream);
-                        fileStream.Close();
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await model.UploadImage.CopyToAsync(fileStream);
+                        }
+
                     }
                     var entity = _mapper.Map<Product>(model);
-                    entity.ImagePath= imageName;
+                    entity.ImagePath = imageName;
                     await _productRepo.UpdateAsync(entity);
                     TempData["Success"] = $"{entity.ProductName} product is updated!";
                     return RedirectToAction("Index");
@@ -197,17 +206,18 @@ namespace WEB.Controllers
             return RedirectToAction("Index");
 
         }
+
         //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-           var product = await _productRepo.GetByIdAsync(id);
+            var product = await _productRepo.GetByIdAsync(id);
 
-                if (product is not null)
-                {
-                    await _productRepo.DeleteAsync(product);
-                    TempData["Success"] = $"{product.ProductName} is deleted!";
-                    return RedirectToAction("Index");
-                }
+            if (product is not null)
+            {
+                await _productRepo.DeleteAsync(product);
+                TempData["Success"] = $"{product.ProductName} is deleted!";
+                return RedirectToAction("Index");
+            }
             TempData["Error"] = "Product not found!";
             return RedirectToAction("Index");
         }

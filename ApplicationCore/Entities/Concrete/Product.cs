@@ -15,10 +15,10 @@ namespace ApplicationCore.Entities.Concrete
         public string Description { get; set; }
         public double UnitPrice { get; set; }
         public int Quantity { get; set; }
-        public string? ImagePath { get; set; }
+        public string ImagePath { get; set; }
 
         [NotMapped]
-        public IFormFile? Image { get; set; }
+        public IFormFile Image { get; set; }
         public int SubcategoryId { get; set; }
         public Subcategory Subcategory { get; set; }
     }

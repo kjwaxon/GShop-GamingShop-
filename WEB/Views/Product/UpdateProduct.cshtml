@@ -59,13 +59,16 @@
                             <div class="col-md-12 mb-4">
                                 <div class="form-outline">
                                     <label class="form-label" for="uploadImage" asp-for="UploadImage"></label>
-                                    <input type="file" id="uploadImage" asp-for="UploadImage" class="form-control form-control-lg" />
+                                    <input id="uploadImage" onchange="readURL(this);" asp-for="UploadImage" class="form-control form-control-lg" />
                                     <span asp-validation-for="UploadImage" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-4">
-                                <img id="image" src="~/img/product/@Model.Image" width="150" height="150" />
-                            </div>
+                            @if (Model.Image!=null)
+                            {
+                                <div class="col-md-12 mb-4">
+                                    <img id="image" src="~/img/product/@Model.Image" width="150" height="150" />
+                                </div>
+                            }
 
                         </div>
                         <div class="d-flex justify-content-end pt-3">
@@ -78,8 +81,3 @@
         </div>
     </div>
 </div>
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
