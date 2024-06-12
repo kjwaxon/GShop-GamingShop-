@@ -30,7 +30,7 @@
         @if (!User.IsInRole("admin"))
         {
             <li class="nav-item p-1">
-                <a class="btn btn-outline-warning" asp-area="" asp-controller="Students" asp-action="DetailStudent">Notlarım</a>
+                <a class="btn btn-outline-primary" asp-area="" asp-controller="Cart" asp-action="Index"><i class="fa-solid fa-cart-shopping"></i></a>
             </li>
 
         }
@@ -42,6 +42,10 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li>
                     <a class="dropdown-item" asp-controller="Account" asp-action="EditUser">Edit Information</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Order" asp-action="Index">My Orders</a>
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>

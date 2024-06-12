@@ -25,6 +25,7 @@ namespace DataAccess.AutoMapper
 
             CreateMap<Product, CreateProductDTO>().ReverseMap();
             CreateMap<Product, UpdateProductDTO>().ReverseMap();
+            
         }
     }
 }

@@ -1,0 +1,28 @@
+﻿@using ApplicationCore.Entities
+@{
+    ViewData["Title"] = "Confirmation";
+}
+@model CheckoutVM
+
+<h2>Order Confirmation</h2>
+<p>Thank you for your purchase!</p>
+
+<h3>Order Details</h3>
+<ul>
+    @foreach (var item in Model.CartItems)
+    {
+        <li>
+            <img src="@item.ImageUrl" alt="@item.ProductName" width="50" />
+            @item.ProductName - @item.Quantity x @item.UnitPrice.ToString("C2", new System.Globalization.CultureInfo("en-US"))
+        </li>
+    }
+</ul>
+<p>Total: @Model.TotalAmount.ToString("C2", new System.Globalization.CultureInfo("en-US"))</p>
+
+<h3>Shipping Address</h3>
+<p>
+    @Model.AddressLine1<br />
+    @Model.AddressLine2<br />
+    @Model.City, @Model.ZipCode<br />
+    @Model.Country
+</p>

@@ -15,6 +15,14 @@ namespace DataAccess.Services.Concrete
     {
         public ProductRepository(AppDbContext context) : base(context)
         {
+
         }
+
+        public async Task<bool> IsProductAvailable(int productId, int requiredQuantity)
+        {
+            var product = await GetByIdAsync(productId);
+            return product?.CheckAvailability(requiredQuantity) ?? false;
+        }
+
     }
 }

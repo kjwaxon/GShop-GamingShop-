@@ -1,13 +1,17 @@
 using ApplicationCore.Entities.UserEntities.Concrete;
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using DataAccess.Autofac;
+using DataAccess.AutoMapper;
 using DataAccess.Context;
 using DataAccess.Context.IdentityContext;
 using DataAccess.FluentValidators.AccountValidators;
 using DataAccess.FluentValidators.CategoryValidators;
 using DataAccess.FluentValidators.ProductValidators;
 using DataAccess.FluentValidators.SubcategoryValidators;
+using DataAccess.Services.Concrete;
+using DataAccess.Services.Interface;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +36,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<UpdateSubcategoryValidator>
 builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductValidator>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
@@ -66,7 +72,6 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(x =>
 })
     .AddEntityFrameworkStores<AppIdentityDbContext>()
     .AddDefaultTokenProviders();
-
 
 var app = builder.Build();
 

@@ -14,8 +14,8 @@ namespace DataAccess.Services.Concrete
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
-        private readonly AppDbContext _context;
-        private readonly DbSet<T> _table;
+        protected readonly AppDbContext _context;
+        protected readonly DbSet<T> _table;
 
         public BaseRepository(AppDbContext context)
         {
