@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities.Concrete;
+﻿using ApplicationCore.DTO_s.OrderDTO;
+using ApplicationCore.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Services.Interface
 {
-    public interface IOrderRepository:IBaseRepository<Order>
+    public interface IOrderRepository
     {
-        Task<Order> GetOrderByIdAsync(int orderId);
-        Task<List<Order>> GetOrdersByUserIdAsync(string userId);
-        Task<bool> AddOrderAsync(Order order);
-        Task<bool> UpdateOrderAsync(Order order);
-        Task<bool> DeleteOrderAsync(Order order);
+        Task<IEnumerable<Order>> GetOrders(bool getAll=false);
+        Task UpdateOrderStatus(UpdateOrderDTO model);
+        Task PaymentStatus(int orderId);
+        Task<Order?> GetOrderById(int orderId);
+        Task<IEnumerable<OrderStatus>> GetOrderStatuses();
     }
 }

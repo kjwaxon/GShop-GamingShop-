@@ -24,24 +24,6 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
             {
                 builder.RegisterModule(new AutofacBusinessModule());
             });
-
-
-// Add services to the container.
-builder.Services.AddValidatorsFromAssemblyContaining<EditUserValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateCategoryValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateSubcategoryValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateSubcategoryValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductValidator>();
-builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
-
-
 var entityConnection = builder.Configuration.GetConnectionString("EntityConnection");
 var identityConnection = builder.Configuration.GetConnectionString("IdentityConnection");
 
@@ -73,6 +55,32 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(x =>
     .AddEntityFrameworkStores<AppIdentityDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddValidatorsFromAssemblyContaining<EditUserValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateCategoryValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateSubcategoryValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateSubcategoryValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductValidator>();
+builder.Services.AddControllersWithViews();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<IHomeRepository, HomeRepository>();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -86,8 +94,11 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseSession();
+
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

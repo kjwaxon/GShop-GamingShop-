@@ -1,6 +1,7 @@
 ﻿@using ApplicationCore.Entities.Abstract
 @{
     ViewData["Title"] = "Index";
+    Layout = "_LayoutAdmin";
 }
 @model List<GetProductVM>
 
@@ -11,7 +12,7 @@
                 <h3 class="card-title">Products</h3>
             </div>
             <div class="card-body">
-                <table id="myTable2" class="cell-border hover compact" style="width:100%">
+                <table id="myTable2" class="cell-border hover" style="width:100%">
                     <thead>
                         <tr>
                             <th>Id</th>

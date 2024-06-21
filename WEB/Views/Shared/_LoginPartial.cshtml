@@ -1,4 +1,8 @@
-﻿<div class="d-flex ms-auto">
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var cartCount = HttpContextAccessor.HttpContext.Session.GetInt32("CartCount") ?? 0;
+}
+<div class="d-flex ms-auto">
     @if (!User.Identity.IsAuthenticated)
     {
         <li class="nav-item ms-auto">
@@ -11,47 +15,21 @@
     else
     {
 
-        @if (User.IsInRole("admin"))
-        {
-            <li class="nav-item p-1">
-                <a class="btn btn-outline-primary" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin Dashboard</a>
-            </li>
-            <li class="nav-item p-1">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Teachers" asp-action="Index">Öğretmenler</a>
-            </li>
-            <li class="nav-item p-1">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Students" asp-action="Index">Öğrenciler</a>
-            </li>
-            <li class="nav-item p-1">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Classrooms" asp-action="Index">Sınıflar</a>
-            </li>
-        }
-
         @if (!User.IsInRole("admin"))
         {
-            <li class="nav-item p-1">
-                <a class="btn btn-outline-primary" asp-area="" asp-controller="Cart" asp-action="Index"><i class="fa-solid fa-cart-shopping"></i></a>
-            </li>
+            <div class="btn-group me-5" role="group">
+                <a class="btn btn-primary" type="button" asp-area="" asp-controller="Cart" asp-action="GetCart">
+                    <span class="badge badge-pill badge-primary">@(cartCount)</span>
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </a>
 
-        }
-
-        <li class="nav-item dropdown p-1">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                @User.Identity!.Name
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li>
-                    <a class="dropdown-item" asp-controller="Account" asp-action="EditUser">Edit Information</a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a class="dropdown-item" asp-controller="Order" asp-action="Index">My Orders</a>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">Logout</a>
-                </li>
-            </ul>
+                <div class="btn-group" role="group">
+                    <a type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">@User.Identity!.Name</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" asp-controller="Account" asp-action="EditUser">Edit Information</a></li>
+                        <li><a class="dropdown-item" asp-controller="Order" asp-action="GetOrders">Orders</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">Logout</a></li>
+                    </ul>
                     <!-- Modal -->
                     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -70,8 +48,14 @@
                             </div>
                         </div>
                     </div>
-               
-        </li>
+                </div> 
+
+            </div>
+            
+            
+        }
+
+        
 
 
     }

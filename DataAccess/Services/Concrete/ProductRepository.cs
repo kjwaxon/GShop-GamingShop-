@@ -2,9 +2,9 @@
 using ApplicationCore.Entities.Concrete;
 using DataAccess.Context;
 using DataAccess.Services.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,16 +13,14 @@ namespace DataAccess.Services.Concrete
 {
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
+        private readonly AppDbContext _context;
+
         public ProductRepository(AppDbContext context) : base(context)
         {
-
+            _context = context;
         }
 
-        public async Task<bool> IsProductAvailable(int productId, int requiredQuantity)
-        {
-            var product = await GetByIdAsync(productId);
-            return product?.CheckAvailability(requiredQuantity) ?? false;
-        }
+        public async Task<IEnumerable<Product>> GetProducts() => await _context.Products.Include(a => a.Subcategory).ToListAsync();
 
     }
 }

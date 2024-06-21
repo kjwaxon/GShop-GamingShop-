@@ -15,18 +15,19 @@ namespace ApplicationCore.Entities.Concrete
         public string ProductName { get; set; }
         public string Description { get; set; }
         public double UnitPrice { get; set; }
+        [NotMapped]
         public int Quantity { get; set; }
         public bool IsAvailable { get; set; }
         public string ImagePath { get; set; }
+
+        public Stock Stock { get; set; }
 
         [NotMapped]
         public IFormFile Image { get; set; }
         public int SubcategoryId { get; set; }
         public Subcategory Subcategory { get; set; }
 
-        public bool CheckAvailability(int requiredQuantity)
-        {
-            return IsAvailable && Quantity>= requiredQuantity;
-        }
+        [NotMapped]
+        public string SubcategoryName { get; set; }
     }
 }

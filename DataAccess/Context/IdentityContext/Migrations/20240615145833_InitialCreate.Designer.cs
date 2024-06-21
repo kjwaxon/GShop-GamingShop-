@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.Context.IdentityContext.Migrations
 {
     [DbContext(typeof(AppIdentityDbContext))]
-    [Migration("20240520203029_InitialCreate")]
+    [Migration("20240615145833_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace DataAccess.Context.IdentityContext.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -123,8 +123,8 @@ namespace DataAccess.Context.IdentityContext.Migrations
                             Id = "d297d83e-f9c8-4534-a81c-fe005bd61668",
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(1996, 1, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "9ebd5f7d-ded5-429b-bd48-16ab7368e512",
-                            CreatedDate = new DateTime(2024, 5, 20, 23, 30, 28, 519, DateTimeKind.Local).AddTicks(9569),
+                            ConcurrencyStamp = "6237c83f-e34e-4806-8a13-568cda805225",
+                            CreatedDate = new DateTime(2024, 6, 15, 17, 58, 32, 605, DateTimeKind.Local).AddTicks(9483),
                             Email = "kaanadmin@gshop.com",
                             EmailConfirmed = false,
                             FirstName = "Kaan",
@@ -132,9 +132,9 @@ namespace DataAccess.Context.IdentityContext.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "KAANADMIN@GSHOP.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEO5tFlZd2eBc/j16o0IK651AsFW0603OMwXv7Hl/rTNrCSAEvQT4drCEwjWhcJZPPA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEC7c9qfhpDDoJUlSgc2QR+i9EDjzhs2qbPiPIqQnlALGN5uYGDUbuAuss/pRlyKmwQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "346152f5-c809-4292-a027-ed042da35737",
+                            SecurityStamp = "4cfc97de-15b1-4b18-953b-482a344f291e",
                             Status = 1,
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -144,8 +144,8 @@ namespace DataAccess.Context.IdentityContext.Migrations
                             Id = "a62a40f0-d8d9-4a80-92f8-6722612df266",
                             AccessFailedCount = 0,
                             BirthDate = new DateTime(1996, 1, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ConcurrencyStamp = "23a3ba1f-5b2f-4d74-8e55-a86872809015",
-                            CreatedDate = new DateTime(2024, 5, 20, 23, 30, 28, 564, DateTimeKind.Local).AddTicks(6976),
+                            ConcurrencyStamp = "1f9163cd-7a4e-4e0a-9941-3b8d8c4f8318",
+                            CreatedDate = new DateTime(2024, 6, 15, 17, 58, 32, 648, DateTimeKind.Local).AddTicks(9822),
                             Email = "kaanaslan@gshop.com",
                             EmailConfirmed = false,
                             FirstName = "Kaan",
@@ -153,9 +153,9 @@ namespace DataAccess.Context.IdentityContext.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "KAANASLAN@GSHOP.COM",
                             NormalizedUserName = "KAAN.ASLAN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEH2lKflcOlxecjU8XeNr9mCuPzEnsyxL7H/KIhZsWIzYumptKxkH4JETqN0zJCxPEA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECUDTS7UBQEC/XOweEi1+eunzyPj8QloAYVLHYMCphKqjapGAq6NhfRfzaalnMN3EA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "78a46c70-e00d-4217-82e9-c975a66296e6",
+                            SecurityStamp = "2bc28688-cee6-48f0-a041-d447b7d06072",
                             Status = 1,
                             TwoFactorEnabled = false,
                             UserName = "kaan.aslan"

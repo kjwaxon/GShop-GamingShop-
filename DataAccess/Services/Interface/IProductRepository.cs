@@ -9,6 +9,6 @@ namespace DataAccess.Services.Interface
 {
     public interface IProductRepository:IBaseRepository<Product>
     {
-        Task<bool> IsProductAvailable(int productId,int requiredQuantity);
+        Task<IEnumerable<Product>> GetProducts();
     }
 }

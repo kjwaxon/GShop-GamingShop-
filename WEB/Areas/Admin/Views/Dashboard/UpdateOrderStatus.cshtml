@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Update Order Status";
+}
+@model UpdateOrderDTO
+
+<h2>Update Order Status</h2>
+
+
+<form style="width: 50%;" asp-action="UpdateOrderStatus" class="pt-2">
+    <input type="hidden" asp-for="OrderId" />
+
+    <div class="mb-2">
+        <label for="OrderStatusId">Order Status</label>
+        <select class="form-control" asp-for="OrderStatusId" asp-items="Model.OrderStatusList">
+            <option value="">Select order status</option>
+        </select>
+        <span class="text-danger" asp-validation-for="OrderStatusId"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a class="my-2 btn btn-primary" asp-action="AllOrders">Back</a>
+</form>

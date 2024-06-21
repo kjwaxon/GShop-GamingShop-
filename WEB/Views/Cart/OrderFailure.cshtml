@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Order Failure";
+}
+
+<h2>Order Failure</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        <p>@TempData["ErrorMessage"]</p>
+    </div>
+}
+
+<p>Sorry, there was an error processing your order. Please try again or contact support if the issue persists.</p>

@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Get Orders";
+}
+@model IEnumerable<Order>
+
+<div class="container mt-4">
+    <h4>My Orders</h4>
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Order Status</th>
+                    <th>Total Amount</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.CreatedDate.ToString("dd-MM-yyyy")</td>
+                        <td>@order.OrderStatus.StatusName</td>
+                        <td>@order.OrderDetails.Select(item => item.UnitPrice * item.Quantity).Sum().ToString("C2", new System.Globalization.CultureInfo("en-US"))</td>
+                        <td>
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#orderDetails-@order.Id" aria-expanded="false" aria-controls="orderDetails-@order.Id">
+                             View Details
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="collapse" id="orderDetails-@order.Id">
+                        <td colspan="4">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Image</th>
+                                        <th>Subcategory</th>
+                                        <th>Unit Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderDetails)
+                                    {
+                                        <tr>
+                                            <td>@item.Product.ProductName</td>
+                                            <td><img src="/img/product/@item.Product.ImagePath" alt="@item.Product.ProductName" style="width:80px;height:100px;" /></td>
+                                            <td>@item.Product.Subcategory.SubcategoryName</td>
+                                            <td>@item.UnitPrice.ToString("C2", new System.Globalization.CultureInfo("en-US"))</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@((item.UnitPrice * item.Quantity).ToString("C2", new System.Globalization.CultureInfo("en-US")))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h5>No orders found.</h5>
+        </div>
+    }
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary my-2">Back</a>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+}

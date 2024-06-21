@@ -3,7 +3,9 @@ using ApplicationCore.DTO_s.SubcategoryDTO;
 using ApplicationCore.Entities.Abstract;
 using ApplicationCore.Entities.Concrete;
 using AutoMapper;
+using DataAccess.Context;
 using DataAccess.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WEB.Models.ViewModels;
@@ -12,43 +14,47 @@ namespace WEB.Controllers
 {
     public class ProductController : Controller
     {
+        private readonly AppDbContext _context;
         private readonly IProductRepository _productRepo;
         private readonly ISubcategoryRepository _subcategoryRepo;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(IProductRepository productRepo, ISubcategoryRepository subcategoryRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment)
+        public ProductController(AppDbContext context,IProductRepository productRepo, ISubcategoryRepository subcategoryRepo, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
+            _context = context;
             _productRepo = productRepo;
             _subcategoryRepo = subcategoryRepo;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
         }
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
-            var products = await _productRepo.GetFilteredListAsync
-                (
-                    select: x => new GetProductVM
-                    {
-                        Id = x.Id,
-                        ProductName = x.ProductName,
-                        ProductDescription = x.Description,
-                        UnitPrice = x.UnitPrice,
-                        Quantity = x.Quantity,
-                        Image = x.ImagePath,
-                        SubcategoryName = x.Subcategory.SubcategoryName,
-                        CreatedDate = x.CreatedDate,
-                        UpdatedDate = x.UpdatedDate,
-                        Status = x.Status
-                    },
-                    where: x => x.Status != Status.Passive,
-                    join: x => x.Include(y => y.Subcategory)
-                );
+            var products = await _context.Products
+                .Where(x => x.Status != Status.Passive)
+                .Include(x => x.Subcategory)
+                .Include(x => x.Stock)
+                .Select(x => new GetProductVM
+                {
+                    Id = x.Id,
+                    ProductName = x.ProductName,
+                    ProductDescription = x.Description,
+                    UnitPrice = x.UnitPrice,
+                    Quantity = x.Stock != null ? x.Stock.Quantity : 0,
+                    Image = x.ImagePath,
+                    SubcategoryName = x.Subcategory != null ? x.Subcategory.SubcategoryName : string.Empty,
+                    CreatedDate = x.CreatedDate,
+                    UpdatedDate = x.UpdatedDate,
+                    Status = x.Status
+                })
+                .ToListAsync();
+
             return View(products);
         }
 
-        //[Authorize(Roles = "admin")]
+
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateProduct()
         {
             var subcategories = await _subcategoryRepo.GetFilteredListAsync
@@ -65,7 +71,7 @@ namespace WEB.Controllers
             return View(model);
         }
 
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
 
         public async Task<IActionResult> CreateProduct(CreateProductDTO model)
@@ -109,7 +115,7 @@ namespace WEB.Controllers
             TempData["Error"] = "Please fill the blanks according to rules below!";
             return View(model);
         }
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateProduct(int id)
         {
             if (id > 0)
@@ -136,7 +142,7 @@ namespace WEB.Controllers
             TempData["Error"] = "Product not found!";
             return RedirectToAction("Index");
         }
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProduct(UpdateProductDTO model)
         {
@@ -207,7 +213,7 @@ namespace WEB.Controllers
 
         }
 
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _productRepo.GetByIdAsync(id);

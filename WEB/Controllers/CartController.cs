@@ -1,226 +1,201 @@
-﻿using ApplicationCore.Entities.Concrete;
-using AutoMapper;
+﻿using ApplicationCore.DTO_s.CheckoutDTO;
+using ApplicationCore.Entities.UserEntities.Concrete;
+using DataAccess.Services.Concrete;
 using DataAccess.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using WEB.Models.ViewModels;
+using WEB.Models;
 
 namespace WEB.Controllers
 {
+    [Authorize]
     public class CartController : Controller
     {
         private readonly ICartRepository _cartRepo;
-        private readonly IUserRepository _userRepo;
-        private readonly IOrderRepository _orderRepo;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CartController(ICartRepository cartRepo, IUserRepository userRepo, IOrderRepository orderRepo)
+        public CartController(ICartRepository cartRepo, IHttpContextAccessor httpContextAccessor, UserManager<AppUser> userManager)
         {
             _cartRepo = cartRepo;
-            _userRepo = userRepo;
-            _orderRepo = orderRepo;
+            _httpContextAccessor = httpContextAccessor;
+            _userManager = userManager;
         }
-
-        public async Task<IActionResult> Index()
+        [HttpPost]
+        public async Task<IActionResult> AddItem(int productId, int quantity)
         {
-            var user = await _userRepo.FindUser(HttpContext.User);
-            var cart = await _cartRepo.GetCartByUserId(user.Id);
-            if (cart == null || cart.CartDetails == null || cart.CartDetails.Count == 0)
+            try
             {
-                var emptyCartVM = new GetCartVM { BuyerId = user.Id };
-                return View(emptyCartVM);
+                bool itemExists = await _cartRepo.ItemExistsInCart(productId);
+                if (itemExists)
+                {
+                    TempData["Error"] = "You already have this item in cart. Check the cart to change quantity!";
+                }
+                else
+                {
+                    await _cartRepo.AddItem(productId, quantity);
+                    TempData["Success"] = "Item added to cart successfully.";
+                }
+                string userId = _userManager.GetUserId(User);
+                int cartCount = await _cartRepo.GetCartCount(userId);
+                HttpContext.Session.SetInt32("CartCount", cartCount);
+                
+                return RedirectToAction("Index", "Home");
             }
-
-            var cartItems = cart.CartDetails.Select(x => new CartItemVM
+            catch (UnauthorizedAccessException)
             {
-                Id = x.Id,
-                ProductId = x.ProductId,
-                ProductName = x.Product.ProductName,
-                UnitPrice = x.Product.UnitPrice,
-                Quantity = x.Quantity,
-                ImageUrl = x.Product.ImagePath
-            }).ToList();
-
-            var cartVM = new GetCartVM
+                TempData["Error"] = "You must be logged in to add items to the cart.";
+                return RedirectToAction("Login", "Account");
+            }
+            catch (InvalidOperationException ex)
             {
-                Id = cart.Id,
-                BuyerId = cart.UserId,
-                cartItems = cartItems
-            };
-            return View(cartVM);
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItemToCart(int productId, int quantity)
+        public async Task<IActionResult> RemoveItem(int productId)
         {
-            var user = await _userRepo.FindUser(HttpContext.User);
-            var result = await _cartRepo.AddItemToCart(user.Id, productId, quantity);
-            if (result)
+            try
             {
-                TempData["Success"] = "Item added to cart!";
+                await _cartRepo.RemoveItem(productId);
+                string userId = _userManager.GetUserId(User);
+                int cartCount = await _cartRepo.GetCartCount(userId);
+                TempData["Success"] = "Item removed from cart successfully.";
+                return RedirectToAction("GetCart");
             }
-            else
+            catch (Exception)
             {
-                TempData["Error"] = "Item could not be added to cart!";
+                TempData["Error"] = "An error occurred while removing the item. Please try again later.";
+                return RedirectToAction("GetCart");
             }
-            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateQuantity(int productId, int change)
+        {
+            try
+            {
+                await _cartRepo.UpdateQuantity(productId, change);
+                string userId = _userManager.GetUserId(User);
+                int cartCount = await _cartRepo.GetCartCount(userId);
+                TempData["Success"] = "Cart updated successfully.";
+                return RedirectToAction("GetCart");
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "An error occurred while updating the item quantity. Please try again later.";
+                return RedirectToAction("GetCart");
+            }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateItemQuantity(int productId, int quantity)
+        public async Task<IActionResult> GetCart()
         {
-            var user = await _userRepo.FindUser(HttpContext.User);
-            var result = await _cartRepo.UpdateItemQuantity(user.Id, productId, quantity);
-            if (result)
-            {
-                TempData["Success"] = "Item quantity updated!";
-            }
-            else
-            {
-                TempData["Error"] = "Item quantity could not be updated!";
-            }
-            return RedirectToAction("Index");
+            var cart = await _cartRepo.GetCart();
+            int cartCount = cart?.CartDetails.Sum(cd => cd.Quantity) ?? 0;
+            HttpContext.Session.SetInt32("CartCount", cartCount);
+            TempData["CartCount"] = cartCount;
+            return View(cart);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> RemoveItemFromCart(int productId)
-        {
-            var user = await _userRepo.FindUser(HttpContext.User);
-            var result = await _cartRepo.RemoveItemFromCart(user.Id, productId);
-            if (result)
-            {
-                TempData["Success"] = "Item removed from cart!";
-            }
-            else
-            {
-                TempData["Error"] = "Item could not be removed from cart!";
-            }
-            return RedirectToAction("Index");
-        }
 
         [HttpPost]
         public async Task<IActionResult> ClearCart()
         {
-            var user = await _userRepo.FindUser(HttpContext.User);
-            var result = await _cartRepo.ClearCart(user.Id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["Error"] = "You must be logged in to clear the cart.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var result = await _cartRepo.ClearCart(userId);
+
             if (result)
             {
-                TempData["Success"] = "Cart cleared!";
+                HttpContext.Session.SetInt32("CartCount", 0);
+                TempData["Success"] = "Cart cleared successfully.";
+                TempData["CartCount"] = 0;
             }
             else
             {
-                TempData["Error"] = "Cart could not be cleared!";
+                TempData["Error"] = "Failed to clear the cart.";
             }
-            return RedirectToAction("Index");
+
+            return RedirectToAction("GetCart");
         }
 
-        public async Task<IActionResult> Checkout()
+
+        public IActionResult Checkout()
         {
-            var user = await _userRepo.FindUser(HttpContext.User);
-            var cart = await _cartRepo.GetCartByUserId(user.Id);
-            if (cart == null || cart.CartDetails == null || cart.CartDetails.Count == 0)
-            {
-                return RedirectToAction("Index");
-            }
-
-            var cartItems = cart.CartDetails.Select(x => new CartItemVM
-            {
-                Id = x.Id,
-                ProductId = x.ProductId,
-                ProductName = x.Product.ProductName,
-                UnitPrice = x.Product.UnitPrice,
-                Quantity = x.Quantity,
-                ImageUrl = x.Product.ImagePath
-            }).ToList();
-
-            var checkoutVM = new CheckoutVM
-            {
-                BuyerId = cart.UserId,
-                CartItems = cartItems,
-                TotalAmount = (decimal)cartItems.Sum(x => x.UnitPrice * x.Quantity)
-            };
-
-            return View(checkoutVM);
+            return View();
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Checkout(CheckoutVM model)
+        public async Task<IActionResult> Checkout(CheckoutDTO model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
+
+            var (isCheckedOut, errorMessage) = await _cartRepo.Checkout(model);
+
+            if (!isCheckedOut)
+            {
+                // Optionally, add the error message to the ModelState to show it in the view
+                TempData["ErrorMessage"] = errorMessage;
+                return RedirectToAction(nameof(OrderFailure));
             }
 
-            var user = await _userRepo.FindUser(HttpContext.User);
-            var cart = await _cartRepo.GetCartByUserId(user.Id);
+            return RedirectToAction(nameof(OrderSuccess));
+            //if (!ModelState.IsValid)
+            //{
+            //    TempData["Error"] = "Invalid checkout information.";
+            //    return RedirectToAction("GetCart");
+            //}
 
-            if (cart == null || cart.CartDetails == null || cart.CartDetails.Count == 0)
-            {
-                return RedirectToAction("Index");
-            }
+            //try
+            //{
+            //    var result = await _cartRepo.Checkout(model);
 
-            var order = new Order
-            {
-                UserId = user.Id,
-                TotalAmount = model.TotalAmount,
-                PaymentStatus = "Pending",
-                OrderDetails = cart.CartDetails.Select(x => new OrderDetail
-                {
-                    ProductName = x.Product.ProductName,
-                    UnitPrice = x.Product.UnitPrice,
-                    ImagePath = x.Product.ImagePath,
-                    Quantity = x.Quantity,
-                }).ToList(),
-                AddressLine1 = model.AddressLine1,
-                AddressLine2 = model.AddressLine2,
-                City = model.City,
-                ZipCode = model.ZipCode,
-                Country = model.Country
-            };
-
-            await _orderRepo.AddOrderAsync(order);
-
-            order.PaymentStatus = "Completed";
-            await _orderRepo.UpdateOrderAsync(order);
-
-            await _cartRepo.ClearCart(user.Id);
-
-            return RedirectToAction("Confirmation", new { orderId = order.Id });
+            //    if (result)
+            //    {
+            //        HttpContext.Session.SetInt32("CartCount", 0);
+            //        TempData["Success"] = "Checkout successful.";
+            //        TempData["CartCount"] = 0;
+            //        return RedirectToAction("Index", "Home");
+            //    }
+            //    else
+            //    {
+            //        TempData["Error"] = "Checkout failed. Please try again.";
+            //        return RedirectToAction("GetCart");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["Error"] = $"Checkout failed due to an error: {ex.Message}. Please try again.";
+            //    return RedirectToAction("GetCart");
+            //}
         }
 
-        public async Task<IActionResult> Confirmation(int orderId)
+
+
+        public IActionResult OrderSuccess()
         {
-            var order = await _orderRepo.GetOrderByIdAsync(orderId);
-            if (order == null)
-            {
-                return NotFound("Order not found!");
-            }
-
-            var confirmationVM = new CheckoutVM
-            {
-                OrderId = order.Id,
-                BuyerId = order.UserId,
-                TotalAmount = order.TotalAmount,
-                CartItems = order.OrderDetails.Select(x => new CartItemVM
-                {
-                    ProductName = x.ProductName,
-                    UnitPrice = x.UnitPrice,
-                    Quantity = x.Quantity,
-                    ImageUrl = x.ImagePath
-                }).ToList(),
-                AddressLine1 = order.AddressLine1,
-                AddressLine2 = order.AddressLine2,
-                City = order.City,
-                ZipCode = order.ZipCode,
-                Country = order.Country
-            };
-
-            return View(confirmationVM);
+            return View();
         }
 
-        private bool IsValidPayment(string cardNumber, string expirationDate, string cvv)
+        public IActionResult OrderFailure()
         {
-            // Implement payment validation logic here
-            return true;
+            return View();
         }
     }
 }

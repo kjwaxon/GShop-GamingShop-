@@ -1,4 +1,5 @@
-﻿using ApplicationCore.Entities.Concrete;
+﻿using ApplicationCore.DTO_s.CheckoutDTO;
+using ApplicationCore.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,16 @@ namespace DataAccess.Services.Interface
 {
     public interface ICartRepository:IBaseRepository<Cart>
     {
-        Task<bool> AddItemToCart(string userId, int productId, int quantity);
-        Task<bool> UpdateItemQuantity(string userId, int productId, int quantity);
-        Task<bool> RemoveItemFromCart(string userId, int productId);
+        Task<int> AddItem(int productId, int quantity);
+
+        Task UpdateQuantity(int productId, int change);
+        Task RemoveItem(int productId);
+        Task<Cart> GetCart();
         Task<Cart> GetCartByUserId(string userId);
-        Task<bool> ClearCart(string userId);
-        Task<decimal> GetCartTotal(string userId);
+        Task<int> GetCartCount(string userId);
+        Task<bool> ItemExistsInCart(int productId);
+        Task<bool> ClearCart(string userId); 
+        Task<(bool IsSuccess, string ErrorMessage)> Checkout(CheckoutDTO model);
 
     }
 }

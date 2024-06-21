@@ -24,6 +24,8 @@ namespace DataAccess.Context
         public DbSet<CartDetail> CartDetails { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<OrderStatus> OrderStatuses{ get; set; }
+        public DbSet<Stock> Stocks{ get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +33,7 @@ namespace DataAccess.Context
             modelBuilder.ApplyConfiguration(new CategorySeedData());
             modelBuilder.ApplyConfiguration(new SubcategorySeedData());
             modelBuilder.ApplyConfiguration(new ProductSeedData());
+            modelBuilder.ApplyConfiguration(new OrderStatusSeedData());
         }
 
     }
