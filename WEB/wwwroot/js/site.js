@@ -9,10 +9,11 @@
             [10, 25, 50, 'All']
         ],
     });
-
-    $('#stockTable').DataTable();
+    
+    $('.orderTable').DataTable();
+    
     $('#myTable').DataTable();
-
+    
     var groupColumn = 2;
     var table = $('#myTable2').DataTable({
         columnDefs: [{ visible: false, targets: groupColumn }],
@@ -32,12 +33,12 @@
                             .before(
                                 '<tr class="group"><td colspan="' + numColumns + '">' + group + '</td></tr>'
                             );
-
                         last = group;
                     }
                 });
         }
     });
+    
     $('#myTable2 tbody').on('click', 'tr.group', function () {
         var currentOrder = table.order()[0];
         if (currentOrder[0] === groupColumn && currentOrder[1] === 'asc') {
@@ -46,7 +47,7 @@
             table.order([groupColumn, 'asc']).draw();
         }
     });
-
+    
     $('.truncate-text').click(function () {
         var fullText = $(this).attr('data-fulltext');
         var currentText = $(this).text();
@@ -56,7 +57,7 @@
             $(this).text(currentText.substr(0, 40) + '...');
         }
     });
-
+    
     var uploadImageElement = document.getElementById('uploadImage');
     if (uploadImageElement) {
         uploadImageElement.addEventListener('change', function () {
@@ -66,24 +67,27 @@
             }
         });
     }
-
+    
     setTimeout(() => {
-        $(".notification").fadeOut("slow");
+        $('.notification').fadeOut('slow');
     }, 6000);
-
-    updateSubcategories();
-    $('#CategoryId').change(updateSubcategories);
+    
+    if (document.getElementById('CategoryId')) {
+        updateSubcategories();
+        $('#CategoryId').change(updateSubcategories);
+    }
 });
 
 function updateSubcategories() {
-    var selectedCategoryId = document.getElementById('CategoryId').value;
+    var selectedCategoryId = document.getElementById('CategoryId');
+    if (!selectedCategoryId) return;
     var subcategoryDropdown = document.getElementById('subcategoryId');
     var subcategories = subcategoryDropdown.querySelectorAll('option[data-category-id]');
 
     subcategoryDropdown.value = '';
 
     subcategories.forEach(function (option) {
-        if (option.getAttribute('data-category-id') === selectedCategoryId || selectedCategoryId === '') {
+        if (option.getAttribute('data-category-id') === selectedCategoryId.value || selectedCategoryId.value === '') {
             option.style.display = 'block';
         } else {
             option.style.display = 'none';

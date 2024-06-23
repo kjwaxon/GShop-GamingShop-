@@ -1,4 +1,6 @@
 ﻿using ApplicationCore.DTO_s.OrderDTO;
+using ApplicationCore.Entities.Concrete;
+using DataAccess.Services.Concrete;
 using DataAccess.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,16 @@ namespace WEB.Areas.Admin.Controllers
             _orderRepo = orderRepo;
         }
 
+        public async Task<IActionResult> GetOrderById(int id)
+        {
+            var order  = await _orderRepo.GetOrderById(id);
+            if (order==null)
+            {
+                TempData["Error"] = "Order not found";
+                return RedirectToAction("Index", "Home");
+            }
+            return View(order);
+        }
         
         public async Task<IActionResult> AllOrders()
         {
@@ -24,17 +36,19 @@ namespace WEB.Areas.Admin.Controllers
             return View(orders);
         }
 
-        public async Task<IActionResult> TogglePaymentStatus(int orderId)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdatePaymentStatus(int id)
         {
             try
             {
-                await _orderRepo.PaymentStatus(orderId);
+                await _orderRepo.UpdatePaymentStatus(id);
+                TempData["Success"] = "Payment status updated successfully.";
             }
             catch (Exception ex)
             {
-
+                TempData["Error"] = $"Failed to update payment status: {ex.Message}";
             }
-            return RedirectToAction(nameof(AllOrders));
+            return RedirectToAction("GetOrderById", new { id });
         }
 
         public async Task<IActionResult> UpdateOrderStatus(int orderId)
@@ -42,14 +56,21 @@ namespace WEB.Areas.Admin.Controllers
             var order = await _orderRepo.GetOrderById(orderId);
             if (order == null)
             {
-                throw new InvalidOperationException($"Order with id: {orderId} not found.");
+                TempData["Error"] = "Order not found.";
+                return RedirectToAction("Index", "Home");
             }
+
+            var statuses = await _orderRepo.GetOrderStatuses();
 
             var model = new UpdateOrderDTO
             {
                 OrderId = orderId,
                 OrderStatusId = order.OrderStatusId,
-                OrderStatusList = await GetOrderStatusList(order.OrderStatusId)
+                Statuses = statuses.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.StatusName
+                })
             };
 
             return View(model);
@@ -58,39 +79,28 @@ namespace WEB.Areas.Admin.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateOrderStatus(UpdateOrderDTO model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                model.OrderStatusList = await GetOrderStatusList(model.OrderStatusId);
-                return View(model);
+                try
+                {
+                    await _orderRepo.UpdateOrderStatus(model);
+                    TempData["Success"] = "Order status updated successfully.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = $"Failed to update order status: {ex.Message}";
+                }
             }
-
-            try
+            else
             {
-                await _orderRepo.UpdateOrderStatus(model);
-                TempData["Success"] = "Order updated successfully";
+                TempData["Error"] = "Invalid data.";
             }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "Something went wrong: " + ex.Message;
-            }
-
-            return RedirectToAction(nameof(UpdateOrderStatus), new { orderId = model.OrderId });
+            return RedirectToAction("GetOrderById", new { id = model.OrderId });
         }
-        [Authorize(Roles ="admin")]
+
         public IActionResult Index()
         {
             return View();
-        }
-
-        private async Task<IEnumerable<SelectListItem>> GetOrderStatusList(int selectedStatusId)
-        {
-            var orderStatuses = await _orderRepo.GetOrderStatuses();
-            return orderStatuses.Select(orderStatus => new SelectListItem
-            {
-                Value = orderStatus.Id.ToString(),
-                Text = orderStatus.StatusName,
-                Selected = orderStatus.Id == selectedStatusId
-            }).ToList();
         }
 
     }

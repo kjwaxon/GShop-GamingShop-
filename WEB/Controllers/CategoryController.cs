@@ -9,6 +9,7 @@ using WEB.Models.ViewModels;
 
 namespace WEB.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepo;
@@ -23,7 +24,6 @@ namespace WEB.Controllers
             _productRepo = productRepo;
             _mapper = mapper;
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryRepo.GetFilteredListAsync
@@ -45,7 +45,6 @@ namespace WEB.Controllers
 
         public IActionResult CreateCategory() => View();
 
-        [Authorize(Roles = "admin")]
         [HttpPost,ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCategory(CreateCategoryDTO model)
         {
@@ -64,7 +63,6 @@ namespace WEB.Controllers
             TempData["Error"] = "Please fill the blanks according to rules below!";
             return View(model); 
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateCategory(int id)
         {
             if (id > 0)
@@ -79,7 +77,6 @@ namespace WEB.Controllers
             TempData["Error"] = "Category not found!";
             return RedirectToAction("Index");
         }
-        [Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateCategory(UpdateCategoryDTO model)
         {
@@ -109,7 +106,6 @@ namespace WEB.Controllers
             return RedirectToAction("Index");
 
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             if (id > 0)

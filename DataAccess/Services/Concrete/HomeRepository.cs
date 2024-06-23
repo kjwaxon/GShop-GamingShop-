@@ -30,6 +30,7 @@ namespace DataAccess.Services.Concrete
         {
             searchTerm = searchTerm.ToLower();
             var query = from product in _context.Products
+                        where product.Status!=Status.Passive
                         join subcategory in _context.Subcategories
                         on product.SubcategoryId equals subcategory.Id
                         join category in _context.Categories
@@ -60,6 +61,7 @@ namespace DataAccess.Services.Concrete
         public async Task<IEnumerable<Subcategory>> GetSubcategories(int categoryId = 0)
         {
             var query = from subcategory in _context.Subcategories
+                        where subcategory.Status!=Status.Passive
                         join category in _context.Categories
                         on subcategory.CategoryId equals category.Id
                         where category.Status != Status.Passive

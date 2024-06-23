@@ -12,6 +12,7 @@ using WEB.Models.ViewModels;
 
 namespace WEB.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ProductController : Controller
     {
         private readonly AppDbContext _context;
@@ -28,7 +29,6 @@ namespace WEB.Controllers
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             var products = await _context.Products
@@ -54,7 +54,6 @@ namespace WEB.Controllers
         }
 
 
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateProduct()
         {
             var subcategories = await _subcategoryRepo.GetFilteredListAsync
@@ -71,7 +70,6 @@ namespace WEB.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
 
         public async Task<IActionResult> CreateProduct(CreateProductDTO model)
@@ -115,7 +113,6 @@ namespace WEB.Controllers
             TempData["Error"] = "Please fill the blanks according to rules below!";
             return View(model);
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateProduct(int id)
         {
             if (id > 0)
@@ -142,7 +139,6 @@ namespace WEB.Controllers
             TempData["Error"] = "Product not found!";
             return RedirectToAction("Index");
         }
-        [Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProduct(UpdateProductDTO model)
         {
@@ -213,7 +209,6 @@ namespace WEB.Controllers
 
         }
 
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _productRepo.GetByIdAsync(id);

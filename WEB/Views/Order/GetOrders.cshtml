@@ -4,7 +4,6 @@
 @model IEnumerable<Order>
 
 <div class="container mt-4">
-    <h4>My Orders</h4>
     @if (Model != null && Model.Any())
     {
         <table class="table table-bordered text-center">
@@ -68,7 +67,7 @@
             <h5>No orders found.</h5>
         </div>
     }
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary my-2">Back</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-danger my-2">Back</a>
 </div>
 
 @section Scripts {

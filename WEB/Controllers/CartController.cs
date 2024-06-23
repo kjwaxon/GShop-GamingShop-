@@ -25,7 +25,7 @@ namespace WEB.Controllers
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
         }
-        [HttpPost]
+        [HttpPost,ValidateAntiForgeryToken]
         public async Task<IActionResult> AddItem(int productId, int quantity)
         {
             try
@@ -63,7 +63,7 @@ namespace WEB.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveItem(int productId)
         {
             try
@@ -80,7 +80,7 @@ namespace WEB.Controllers
                 return RedirectToAction("GetCart");
             }
         }
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateQuantity(int productId, int change)
         {
             try
@@ -108,7 +108,7 @@ namespace WEB.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -150,40 +150,12 @@ namespace WEB.Controllers
 
             if (!isCheckedOut)
             {
-                // Optionally, add the error message to the ModelState to show it in the view
                 TempData["ErrorMessage"] = errorMessage;
                 return RedirectToAction(nameof(OrderFailure));
             }
 
             return RedirectToAction(nameof(OrderSuccess));
-            //if (!ModelState.IsValid)
-            //{
-            //    TempData["Error"] = "Invalid checkout information.";
-            //    return RedirectToAction("GetCart");
-            //}
-
-            //try
-            //{
-            //    var result = await _cartRepo.Checkout(model);
-
-            //    if (result)
-            //    {
-            //        HttpContext.Session.SetInt32("CartCount", 0);
-            //        TempData["Success"] = "Checkout successful.";
-            //        TempData["CartCount"] = 0;
-            //        return RedirectToAction("Index", "Home");
-            //    }
-            //    else
-            //    {
-            //        TempData["Error"] = "Checkout failed. Please try again.";
-            //        return RedirectToAction("GetCart");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    TempData["Error"] = $"Checkout failed due to an error: {ex.Message}. Please try again.";
-            //    return RedirectToAction("GetCart");
-            //}
+            
         }
 
 

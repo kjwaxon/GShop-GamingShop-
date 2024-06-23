@@ -5,11 +5,10 @@
 }
 
 <div class="container mt-4">
-    <h2>@ViewData["Title"]</h2>
 
     @if (Model != null && Model.CartDetails != null && Model.CartDetails.Count > 0)
     {
-        <table class="table table-striped">
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Product</th>

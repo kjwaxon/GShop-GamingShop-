@@ -15,19 +15,18 @@
                 <div class="my-2">
                     <form asp-action="Index" class="row g-3 align-items-center">
                         <div class="col-12">
-                            <label class="form-label">Categories</label>
                             <ul class="list-group">
                                 @foreach (var category in Model.Categories)
                                 {
                                     <li class="list-group-item">
-                                        <a asp-action="Index" asp-route-categoryId="@category.Id" asp-route-subcategoryId="0" asp-route-searchTerm="@Model.SearchTerm" class="link-dark">
+                                        <a asp-action="Index" asp-route-categoryId="@category.Id" asp-route-subcategoryId="0" asp-route-searchTerm="@Model.SearchTerm" class="link-orange">
                                             @category.CategoryName
                                         </a>
                                         <ul class="list-group mt-2 ms-3">
                                             @foreach (var subcategory in Model.Subcategories.Where(s => s.CategoryId == category.Id))
                                             {
                                                 <li class="list-group-item">
-                                                    <a asp-action="Index" asp-route-SubcategoryId="@subcategory.Id" asp-route-categoryId="@category.Id" asp-route-searchTerm="@Model.SearchTerm" class="link-dark">
+                                                    <a asp-action="Index" asp-route-SubcategoryId="@subcategory.Id" asp-route-categoryId="@category.Id" asp-route-searchTerm="@Model.SearchTerm" class="link-orange">
                                                         @subcategory.SubcategoryName
                                                     </a>
                                                 </li>
@@ -39,7 +38,6 @@
                         </div>
 
                         <div class="col-12 mt-3">
-                            <label class="form-label" for="searchTerm">Search by product name</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" value="@Model.SearchTerm" id="searchTerm" name="searchTerm" placeholder="Search by Product Name">
                             </div>
@@ -59,8 +57,7 @@
                     {
                         <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                             <div class="card h-100">
-                                    <img src="/img/product/@product.ImagePath" class="card-img-top img-fluid" alt="@product.ProductName">
-                               
+                                <img src="/img/product/@product.ImagePath" class="card-img-top img-fluid" alt="@product.ProductName">
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title">@product.ProductName</h5>
                                     <p class="card-text flex-grow-1">
@@ -76,7 +73,7 @@
                                     </p>
                                     @if (!User.IsInRole("admin"))
                                     {
-                                        @if (@product.Quantity>0)
+                                        @if (@product.Quantity > 0)
                                         {
                                             <form asp-action="AddItem" asp-controller="Cart" method="post" class="mt-auto">
                                                 <input type="hidden" name="productId" value="@product.Id" />
@@ -96,6 +93,5 @@
                 </div>
             </div>
         }
-
     </div>
 </div>

@@ -13,14 +13,8 @@ namespace DataAccess.FluentValidators.AccountValidators
         public EditUserValidator()
         {
             
-            RuleFor(x => x.Email)
-              .NotEmpty()
-              .WithMessage("E-mail must be filled!")
-              .EmailAddress()
-              .WithMessage("Please fill the e-mail area correctly!");
+            
             RuleFor(x => x.Address)
-              .NotEmpty()
-              .WithMessage("Adress must be filled!")
               .MaximumLength(250)
               .WithMessage("Adress can be maximum 250 characters!")
               .MinimumLength(10)

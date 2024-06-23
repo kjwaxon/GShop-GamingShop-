@@ -5,17 +5,15 @@
 
 <h2>Update Order Status</h2>
 
-
-<form style="width: 50%;" asp-action="UpdateOrderStatus" class="pt-2">
+<form asp-action="UpdateOrderStatus" method="post">
     <input type="hidden" asp-for="OrderId" />
 
-    <div class="mb-2">
-        <label for="OrderStatusId">Order Status</label>
-        <select class="form-control" asp-for="OrderStatusId" asp-items="Model.OrderStatusList">
-            <option value="">Select order status</option>
-        </select>
-        <span class="text-danger" asp-validation-for="OrderStatusId"></span>
+    <div class="form-group">
+        <label asp-for="OrderStatusId" class="control-label">Order Status</label>
+        <select asp-for="OrderStatusId" class="form-control" asp-items="Model.Statuses"></select>
+        <span asp-validation-for="OrderStatusId" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Update</button>
-    <a class="my-2 btn btn-primary" asp-action="AllOrders">Back</a>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Update</button>
+    </div>
 </form>

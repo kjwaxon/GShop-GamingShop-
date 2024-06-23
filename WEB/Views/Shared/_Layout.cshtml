@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="orange">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,15 +18,17 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img class="img-fluid" style="height:100px;margin-left:350px" src="/img/logo.png" alt="Alternate Text" /></a>
+            <div class="container-fluid" style="padding: 0;">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="width: 80%; text-align: center;">
+                    <div style="background: url('/img/logo.png') no-repeat center; height: 190px; background-size: auto;"></div>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                            <partial name="_LoginPartial" />
+                        <partial name="_LoginPartial" />
                     </ul>
                 </div>
             </div>
@@ -38,7 +40,6 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - GSHop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

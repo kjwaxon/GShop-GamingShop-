@@ -74,7 +74,6 @@ namespace DataAccess.Services.Concrete
             var appUser = await FindUser(model.Id);
             if (appUser != null)
             {
-                appUser.Email = model.Email;
                 appUser.FirstName = model.FirstName;
                 appUser.LastName = model.LastName;
                 appUser.BirthDate = (DateTime)model.BirthDate;

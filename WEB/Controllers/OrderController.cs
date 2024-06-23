@@ -1,4 +1,5 @@
 ﻿using DataAccess.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WEB.Controllers
@@ -11,6 +12,7 @@ namespace WEB.Controllers
         {
             _orderRepo = orderRepo;
         }
+        [Authorize]
         public async Task<IActionResult> GetOrders()
         {
             var orders = await _orderRepo.GetOrders();

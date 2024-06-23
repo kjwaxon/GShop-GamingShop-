@@ -19,6 +19,10 @@ namespace DataAccess.Autofac
             builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerLifetimeScope();
             builder.RegisterType<SubcategoryRepository>().As<ISubcategoryRepository>().InstancePerLifetimeScope();
             builder.RegisterType<ProductRepository>().As<IProductRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<CartRepository>().As<ICartRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<OrderRepository>().As<IOrderRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<StockRepository>().As<IStockRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<HomeRepository>().As<IHomeRepository>().InstancePerLifetimeScope();
 
             var mappingConfig = new MapperConfiguration(mc =>
             {

@@ -10,6 +10,7 @@ using WEB.Models.ViewModels;
 
 namespace WEB.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class SubcategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepo;
@@ -24,7 +25,6 @@ namespace WEB.Controllers
             _mapper = mapper;
             _subcategoryRepo = subcategoryRepo;
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             var subcategories = await _subcategoryRepo.GetFilteredListAsync
@@ -43,7 +43,6 @@ namespace WEB.Controllers
                  );
             return View(subcategories);
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateSubcategory()
         {
             var categories = await _categoryRepo.GetFilteredListAsync
@@ -59,7 +58,6 @@ namespace WEB.Controllers
             var model =new CreateSubcategoryDTO { Categories = categories };
             return View(model);
         }
-        [Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateSubcategory(CreateSubcategoryDTO model)
         {
@@ -91,7 +89,6 @@ namespace WEB.Controllers
             TempData["Error"] = "Please fill the blanks according to rules below!";
             return View(model);
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateSubcategory(int id)
         {
             if (id > 0)
@@ -118,7 +115,6 @@ namespace WEB.Controllers
             TempData["Error"] = "Subcategory not found!";
             return RedirectToAction("Index");
         }
-        [Authorize(Roles = "admin")]
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateSubcategory(UpdateSubcategoryDTO model)
         {
@@ -160,7 +156,6 @@ namespace WEB.Controllers
             return RedirectToAction("Index");
 
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteSubcategory(int id)
         {
             if (id > 0)

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WEB.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class StockController : Controller
     {
         private readonly IStockRepository _stockRepo;
@@ -14,13 +15,11 @@ namespace WEB.Controllers
         {
             _stockRepo = stockRepo;
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index(string searchTerm = "")
         {
             var stocks = await _stockRepo.GetStocks(searchTerm);
             return View(stocks);
         }
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateStock(int productId)
         {
             var existingStock = await _stockRepo.GetStockByProductId(productId);
@@ -32,7 +31,6 @@ namespace WEB.Controllers
             };
             return View(stock);
         }
-        [Authorize(Roles = "admin")]
         [HttpPost,ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStock(UpdateStockDTO model)
         {

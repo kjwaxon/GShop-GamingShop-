@@ -12,7 +12,7 @@ namespace DataAccess.Services.Interface
     {
         Task<IEnumerable<Order>> GetOrders(bool getAll=false);
         Task UpdateOrderStatus(UpdateOrderDTO model);
-        Task PaymentStatus(int orderId);
+        Task UpdatePaymentStatus(int orderId);
         Task<Order?> GetOrderById(int orderId);
         Task<IEnumerable<OrderStatus>> GetOrderStatuses();
     }

@@ -2,19 +2,22 @@
 @{
     var cartCount = HttpContextAccessor.HttpContext.Session.GetInt32("CartCount") ?? 0;
 }
-<div class="d-flex ms-auto">
+<div class="d-flex ms-auto" style="margin-right:25%">
     @if (!User.Identity.IsAuthenticated)
     {
         <li class="nav-item ms-auto">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+            <form method="get" action="/Account/Register" style="display:inline;">
+                <button type="submit" class="btn btn-danger">Register</button>
+            </form>
         </li>
         <li class="nav-item ms-auto">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+            <form method="get" action="/Account/Login" style="display:inline;">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
         </li>
     }
     else
     {
-
         @if (!User.IsInRole("admin"))
         {
             <div class="btn-group me-5" role="group">
@@ -24,7 +27,9 @@
                 </a>
 
                 <div class="btn-group" role="group">
-                    <a type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">@User.Identity!.Name</a>
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        @User.Identity!.Name
+                    </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" asp-controller="Account" asp-action="EditUser">Edit Information</a></li>
                         <li><a class="dropdown-item" asp-controller="Order" asp-action="GetOrders">Orders</a></li>
@@ -48,15 +53,8 @@
                             </div>
                         </div>
                     </div>
-                </div> 
-
+                </div>
             </div>
-            
-            
         }
-
-        
-
-
     }
 </div>
