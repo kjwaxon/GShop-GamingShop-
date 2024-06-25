@@ -44,10 +44,11 @@ This project is an ASP.NET MVC application for selling gaming products. It inclu
 
   ![Ekran görüntüsü 2024-06-25 212401](https://github.com/kjwaxon/GShop-GamingShop-/assets/103565536/7bff3b4c-c466-416c-891e-70f42ea47d7b)
 - **Order Management**: View and process orders(Update order status and payment).
+- 
+![Ekran görüntüsü 2024-06-25 221739](https://github.com/kjwaxon/GShop-GamingShop-/assets/103565536/d74f2cbb-a836-46b0-a00c-c565a3dcdee9)
 
-  ![Ekran görüntüsü 2024-06-25 212412](https://github.com/kjwaxon/GShop-GamingShop-/assets/103565536/d0f72047-4906-417d-aab0-532378f28ec8)
-  
-  ![Ekran görüntüsü 2024-06-25 212421](https://github.com/kjwaxon/GShop-GamingShop-/assets/103565536/6e0d1f37-94e8-49be-b4ec-57f94cafd7bf)
+![Ekran görüntüsü 2024-06-25 221824](https://github.com/kjwaxon/GShop-GamingShop-/assets/103565536/3307d095-e543-4db5-aaf4-651af560c4f6)
+
 
 
 ### Admin and Default User Credentials
